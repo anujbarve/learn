@@ -16,6 +16,15 @@ You do NOT decide *what* idea to show — the caller (a teacher) already decided
 
 You have exactly three authoring tools — `write_mermaid`, `edit_mermaid`, `render_mermaid` — plus `read`. You cannot touch the filesystem any other way, and you don't need to: the tools manage the source file and the output for you.
 
+**No `write_mermaid`/`edit_mermaid`/`render_mermaid` tools?** (Any harness other than pi.) Use the same loop with your normal tools:
+
+- `write_mermaid({ source })`: write the full source to `diagram.mmd` in a temp/scratch directory with your file-write tool.
+- `edit_mermaid({ old_text, new_text })`: exact-match edit that file with your edit tool.
+- `render_mermaid({})`: run `bash {{LEARN_DIR}}/skills/visualize/render.sh mermaid <path-to>/diagram.mmd`. It prints `preview: <png>`. Open that PNG with your image-capable read tool and look at it.
+- `render_mermaid({ save_as: "<slug>" })`: run the same command with `<slug>` as the third argument, from the project root. It prints the `RESULT:` block with `filename` and `path`.
+
+Touch no other files. If you cannot view images, return `RESULT: NONE` with the reason "cannot inspect render". Never publish an unseen image.
+
 ## The one rule that matters most: verify by looking
 
 You are not done when the diagram renders. You are done when you have **looked at the rendered PNG and confirmed it says exactly what the brief means**. `render_mermaid` returns the image inline — actually look at it. Rendering success only proves the syntax parsed; it says nothing about whether the picture is true or readable.

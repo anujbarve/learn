@@ -20,7 +20,7 @@ Do NOT visualize when prose or a single equation already carries it. A decorativ
 
 ## Choose the maker
 
-Two makers, discovered from `.pi/agents/`:
+Two makers, installed as subagents for your harness (pi: `.pi/agents/`; Claude Code: `.claude/agents/`; OpenCode: `.opencode/agents/`; Gemini CLI: `.gemini/agents/`):
 
 - **`mermaid-maker`** — structural/relational visuals: dependency graphs, flowcharts, sequence/state/ER/class diagrams, trees, mindmaps, timelines. This is the default and fits the dependency-graph pedagogy directly.
 - **`svg-maker`** — spatial/geometric visuals Mermaid can't lay out: exact coordinates, geometry figures, number lines, vectors, plots, custom shapes.
@@ -40,16 +40,28 @@ Keep the idea intact but trust the maker to compose; if your brief lists more th
 
 ## Invoke
 
-Dispatch the maker with the `subagent` tool:
+Dispatch the maker with your harness's subagent mechanism:
 
-```
-subagent(agent="mermaid-maker", task="<your minimal, concrete brief>")
-```
-```
-subagent(agent="svg-maker", task="<your minimal, concrete brief>")
+| Harness | Call |
+|---|---|
+| pi | `subagent(agent="mermaid-maker", task="<brief>")` |
+| Claude Code | `Agent` tool, `subagent_type: "mermaid-maker"`, prompt = brief |
+| OpenCode | `task` tool with the `mermaid-maker` subagent (or `@mermaid-maker <brief>`) |
+| Gemini CLI | the `mermaid-maker` subagent (subagents must be enabled) |
+
+Use `svg-maker` the same way.
+
+**No subagent support** (e.g. Codex, Freebuff, or makers not installed)? Run the maker's workflow yourself. Read `agents/mermaid-maker.md` or `agents/svg-maker.md` in the `learn` folder and follow it exactly. Read `{{LEARN_DIR}}` there as the path of the `learn` folder. Render with this skill's script:
+
+```bash
+bash <this skill's dir>/render.sh mermaid <source.mmd>              # preview → prints PNG path
+bash <this skill's dir>/render.sh svg     <source.svg>              # preview
+bash <this skill's dir>/render.sh mermaid <source.mmd> <kebab-slug> # publish → viz/viz-<slug>-<ts>.png
 ```
 
-The maker owns its own purpose-built tools (`write_*`/`edit_*`/`render_*`) — it authors the source, renders it to a PNG, **looks at the PNG and iterates until it is correct and clean**, publishes it into the vault with a unique filename, and returns:
+Open the preview PNG with your image-capable read tool and actually look at it before you publish. If your harness cannot view images, embed the Mermaid source as a ```` ```mermaid ```` code block instead and keep it very small. A PNG you have not looked at is not verified.
+
+The maker authors the source, renders it to a PNG, **looks at the PNG and iterates until it is correct and clean**, publishes it into the vault with a unique filename, and returns:
 
 ```
 RESULT:
@@ -57,7 +69,7 @@ filename: viz-<slug>-<timestamp>.png
 path: <cwd>/viz/viz-<slug>-<timestamp>.png
 ```
 
-If it returns `RESULT: NONE`, it couldn't make a correct picture of the brief — simplify or rethink, or decide the visual isn't worth it. Never hand-author or fake a diagram yourself; correctness depends on the maker's render-and-inspect loop.
+If it returns `RESULT: NONE`, it couldn't make a correct picture of the brief — simplify or rethink, or decide the visual isn't worth it. Never fake a diagram or skip the render-and-inspect loop. Correctness depends on it. Authoring it yourself is allowed only in the no-subagent fallback above, and only through that same loop.
 
 ## Embed it in the lesson
 
@@ -67,7 +79,7 @@ Put the embed directly in your teaching reply, using Obsidian's wikilink embed w
 ![[viz-<slug>-<timestamp>.png|500]]
 ```
 
-That's all. The `md-log` extension mirrors your reply text verbatim into the linked `.md`, and Obsidian resolves the embed by filename anywhere in the vault (the maker saves into the project's `viz` folder, which is inside the vault) — so it renders inline in the lesson automatically. Width `|500` is a good default; use larger for dense diagrams. Introduce the visual in a sentence, then let it carry the idea — don't narrate every element back in prose.
+That's all. The session log (pi's `md-log` extension, or the manual log described in `AGENTS.md`) mirrors your reply text verbatim into the linked `.md`, and Obsidian resolves the embed by filename anywhere in the vault (the maker saves into the project's `viz` folder, which is inside the vault) — so it renders inline in the lesson automatically. Width `|500` is a good default; use larger for dense diagrams. Introduce the visual in a sentence, then let it carry the idea — don't narrate every element back in prose.
 
 ## Why this is reliable
 
@@ -75,4 +87,4 @@ That's all. The `md-log` extension mirrors your reply text verbatim into the lin
 - PNG embed means **what the maker verified is pixel-identical to what the learner sees** — no re-render drift.
 - Unique filenames keep Obsidian's by-filename embed resolution unambiguous.
 
-> The makers render through the project's `visual-tools` extension (Mermaid via a bundled `@mermaid-js/mermaid-cli` + installed Chrome; SVG via `rsvg-convert`, fallback ImageMagick). You don't render anything yourself — you only brief the maker and embed the filename it returns.
+> In pi the makers render through the `visual-tools` extension. Everywhere else they use `render.sh` next to this file. Both use the same backends: Mermaid via `@mermaid-js/mermaid-cli`, SVG via `rsvg-convert` with ImageMagick as fallback. When a maker subagent exists, you don't render anything yourself. You brief it and embed the filename it returns.

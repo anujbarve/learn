@@ -7,6 +7,8 @@ description: Teach the user anything so it actually locks in and is understood, 
 
 Two principles. They are not tips — they are how you teach him, every time. No other teaching methods come close. Apply them to any explanation, from a one-liner to a deep dive.
 
+> **Harness note.** `quiz`, `ask_user_question`, and the `researcher` subagent are abstract capabilities. In pi they are tools of those names. In any other harness, map them as `AGENTS.md` ("Capabilities") describes. Example: Claude Code uses `AskUserQuestion` and the `Agent` tool. With no question tool, use a numbered plain-text quiz and wait for the reply. With no subagents, research inline with your own web tools. The process stays the same. Only the tool changes.
+
 The goal is never "he can recite the fact." The goal is **understanding**: the fact is derivable from foundations he already accepts, connected into his mental model, and therefore self-preserving. Memorized facts rot. Understood facts don't.
 
 ## The philosophy (why this works — internalize it)
@@ -138,7 +140,7 @@ If you catch yourself asserting a fact he'd have to take on faith — foundation
 
 ## Formatting — math renders as LaTeX
 
-Everything written in a session is rendered to him through Obsidian, which renders LaTeX natively. So whenever math notation is involved — explanations, questions, quiz options and explanations, anything — write it in LaTeX instead of plain-text approximations:
+Everything written in a session is rendered to him as markdown (e.g. through Obsidian, via the session log), which renders LaTeX natively. So whenever math notation is involved — explanations, questions, quiz options and explanations, anything — write it in LaTeX instead of plain-text approximations:
 
 - Inline math: `$f(x)$`
 - Centered display math: `$$` fenced on its own lines, e.g. `$$\n f(x) \n$$`
